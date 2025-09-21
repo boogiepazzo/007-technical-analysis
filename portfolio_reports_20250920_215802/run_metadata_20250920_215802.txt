@@ -1,0 +1,14 @@
+Portfolio Optimization Analysis Run
+=====================================
+
+Run Timestamp: 20250920_215802
+Analysis Period: 2 years
+Risk-Free Rate: 2.0%
+Target Return: 8.0%
+Number of Assets: 15
+Date Range: 2023-09-21 to 2025-09-19
+Number of Days: 501
+Monte Carlo Simulations: 10,000 per portfolio
+Confidence Level: 95%
+
+Assets Analyzed:
