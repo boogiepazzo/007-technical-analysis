@@ -8,6 +8,8 @@ a complete analysis pipeline.
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import os
+from matplotlib.backends.backend_pdf import PdfPages
 import seaborn as sns
 from datetime import datetime
 import warnings
@@ -86,7 +88,8 @@ class PortfolioAnalysisPipeline:
         
         # Step 5: Visualization
         print("\n📈 Step 5: Visualization")
-        self._create_visualizations()
+        # Collect figures silently for PDF
+        self._create_visualizations(collect_figures=True, show=False)
         
         # Step 6: Report Generation
         if generate_pdf:
@@ -118,28 +121,40 @@ class PortfolioAnalysisPipeline:
         
         self.results['portfolio_analysis'] = portfolio_analysis
     
-    def _create_visualizations(self):
+    def _create_visualizations(self, collect_figures=True, show=False):
         """Create comprehensive visualizations"""
         # Set up plotting style
         sns.set_style("whitegrid")
         sns.set_palette("husl")
         plt.rcParams['figure.figsize'] = (16, 10)
         
+        figures = []
+        
         # Efficient Frontier Plot
-        self._plot_efficient_frontier()
+        fig = self._plot_efficient_frontier(show=show)
+        figures.append(fig)
         
         # Portfolio Weights Comparison
-        self._plot_portfolio_weights()
+        fig = self._plot_portfolio_weights(show=show)
+        figures.append(fig)
         
         # Risk-Return Analysis
-        self._plot_risk_return_analysis()
+        fig = self._plot_risk_return_analysis(show=show)
+        figures.append(fig)
         
         # Monte Carlo Visualizations
-        self.monte_carlo.create_visualizations(self.results['monte_carlo_results'])
+        mc_fig = self.monte_carlo.create_visualizations(self.results['monte_carlo_results'], show=show, return_figure=True)
+        if mc_fig is not None:
+            figures.append(mc_fig)
+        
+        if collect_figures:
+            self.results['figures'] = figures
+        
+        return figures
     
-    def _plot_efficient_frontier(self):
+    def _plot_efficient_frontier(self, show=False):
         """Plot efficient frontier"""
-        plt.figure(figsize=(12, 8))
+        fig = plt.figure(figsize=(12, 8))
         
         # Plot individual assets
         annual_returns = self.data_manager.returns.mean() * 252
@@ -162,11 +177,13 @@ class PortfolioAnalysisPipeline:
         plt.title('Efficient Frontier Analysis')
         plt.legend()
         plt.grid(True, alpha=0.3)
-        plt.show()
+        if show:
+            plt.show()
+        return fig
     
-    def _plot_portfolio_weights(self):
+    def _plot_portfolio_weights(self, show=False):
         """Plot portfolio weights comparison"""
-        plt.figure(figsize=(14, 8))
+        fig = plt.figure(figsize=(14, 8))
         
         weights_df = pd.DataFrame({
             name: portfolio['weights'] 
@@ -180,11 +197,13 @@ class PortfolioAnalysisPipeline:
         plt.xticks(rotation=45)
         plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
         plt.grid(True, alpha=0.3)
-        plt.show()
+        if show:
+            plt.show()
+        return fig
     
-    def _plot_risk_return_analysis(self):
+    def _plot_risk_return_analysis(self, show=False):
         """Plot risk-return analysis"""
-        plt.figure(figsize=(12, 8))
+        fig = plt.figure(figsize=(12, 8))
         
         analysis_df = pd.DataFrame({
             name: {k: v for k, v in metrics.items() if k != 'Weights'}
@@ -205,7 +224,9 @@ class PortfolioAnalysisPipeline:
         plt.title('Portfolio Risk-Return Profile')
         plt.colorbar(label='Sharpe Ratio')
         plt.grid(True, alpha=0.3)
-        plt.show()
+        if show:
+            plt.show()
+        return fig
     
     def _generate_pdf_report(self):
         """Generate PDF report"""
@@ -229,6 +250,21 @@ class PortfolioAnalysisPipeline:
         
         if success:
             print("✅ PDF report generated successfully!")
+            # Save high-resolution plots into a single PDF in the same reports folder
+            try:
+                figures = self.results.get('figures', [])
+                if figures:
+                    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                    plots_pdf_path = os.path.join(self.report_generator.output_dir, f"portfolio_plots_{timestamp}.pdf")
+                    with PdfPages(plots_pdf_path) as pdf:
+                        for fig in figures:
+                            pdf.savefig(fig, bbox_inches='tight', dpi=300)
+                    print(f"📄 Plots PDF saved: {plots_pdf_path}")
+                    # Close figures to free memory
+                    for fig in figures:
+                        plt.close(fig)
+            except Exception as e:
+                print(f"⚠️ Failed to save plots PDF: {e}")
         else:
             print("❌ Failed to generate PDF report")
     

@@ -103,8 +103,15 @@ class MonteCarloSimulator:
         
         return results
     
-    def create_visualizations(self, monte_carlo_results, save_plots=False, filename_prefix="monte_carlo"):
-        """Create comprehensive Monte Carlo visualizations"""
+    def create_visualizations(self, monte_carlo_results, save_plots=False, filename_prefix="monte_carlo", show=True, return_figure=False):
+        """Create comprehensive Monte Carlo visualizations.
+
+        Parameters:
+        - save_plots: When True, saves a PNG alongside any returned figure
+        - filename_prefix: Prefix for saved plot filenames
+        - show: When True, displays the figure; set False when compiling PDFs
+        - return_figure: When True, returns the matplotlib Figure for external saving
+        """
         plt.style.use('seaborn-v0_8')
         fig, axes = plt.subplots(2, 3, figsize=(18, 12))
         fig.suptitle('Monte Carlo Simulation Analysis', fontsize=16, fontweight='bold')
@@ -216,7 +223,11 @@ class MonteCarloSimulator:
             plt.savefig(f"{filename_prefix}_analysis.png", dpi=300, bbox_inches='tight')
             print(f"Plots saved as {filename_prefix}_analysis.png")
         
-        plt.show()
+        if show:
+            plt.show()
+        
+        if return_figure:
+            return fig
     
     def generate_summary_report(self, monte_carlo_results):
         """Generate a summary report of Monte Carlo results"""
