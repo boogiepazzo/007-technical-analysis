@@ -1,6 +1,6 @@
 # AGNC Technical Analysis Suite
 
-A comprehensive technical analysis and forecasting system for AGNC (American Capital Agency Corp) with advanced statistical modeling, risk assessment, and professional reporting capabilities.
+A comprehensive modular technical analysis and forecasting system for AGNC (American Capital Agency Corp) with advanced statistical modeling, risk assessment, and professional reporting capabilities. The system has been refactored into individual Python modules for better organization, reusability, and maintainability.
 
 ## 🚀 Features
 
@@ -37,23 +37,50 @@ A comprehensive technical analysis and forecasting system for AGNC (American Cap
 
 ### Required Packages
 ```bash
-pip install numpy pandas matplotlib seaborn yfinance statsmodels arch
+pip install numpy pandas matplotlib seaborn yfinance statsmodels arch reportlab
 ```
 
 ## 📖 Usage
 
-### Running the Analysis
-1. Open `agnc_technical_analysis.ipynb` in Jupyter
-2. Run all cells sequentially
+### Running the Analysis (Modular System)
+1. Run the main script: `python main_working.py`
+2. The system will execute all modules in sequence
 3. View individual plots as they generate
 4. Check the generated PDF report: `AGNC_Technical_Analysis_Report_YYYYMMDD_HHMMSS.pdf`
 
+### Alternative: Jupyter Notebook (Legacy)
+1. Open `old/agnc_technical_analysis.ipynb` in Jupyter
+2. Run all cells sequentially
+3. Note: This is the legacy version - use `main_working.py` for the latest features
+
 ### Configuration
-Modify these parameters in the notebook:
+Modify these parameters in `config.py`:
 - `TICKER`: Stock symbol (default: "AGNC")
 - `YEARS_BACK`: Historical data period (default: 6 years)
 - `FIB_LOOKBACK_DAYS`: Fibonacci calculation window (default: 180 days)
 - `FORECAST_STEPS`: Forecast horizon (default: 30 business days)
+
+## 🏗️ Modular Architecture
+
+The system has been refactored into individual Python modules for better organization and maintainability:
+
+### Core Modules
+- **`main_working.py`**: Main execution script that orchestrates all modules
+- **`config.py`**: Centralized configuration, imports, and global variables
+- **`data_prep.py`**: Data download and initial preparation
+- **`technical_indicators.py`**: Technical analysis calculations (RSI, MACD, etc.)
+- **`time_series_models.py`**: AR, ARMA, ARIMA model fitting and selection
+- **`volatility_models.py`**: ARCH, GARCH, EGARCH volatility modeling
+- **`forecasting.py`**: Monte Carlo simulation, ensemble forecasting, and risk metrics
+- **`plotting.py`**: All visualization functions and plot generation
+- **`pdf_generation.py`**: PDF report generation using ReportLab
+
+### Benefits of Modular Design
+- **Reusability**: Individual modules can be imported and used independently
+- **Maintainability**: Easier to debug, update, and extend specific functionality
+- **Testing**: Each module can be tested independently
+- **Scalability**: Easy to add new features or modify existing ones
+- **Code Organization**: Clear separation of concerns and responsibilities
 
 ## 📊 Output
 
@@ -138,19 +165,36 @@ Modify these parameters in the notebook:
 
 ```
 007-technical-analysis/
-├── agnc_technical_analysis.ipynb    # Main analysis notebook
-├── portfolio_data.py                 # Data utilities
-├── portfolio_main.py                 # Main execution script
-├── portfolio_optimization.py         # Optimization algorithms
-├── portfolio_report.py               # Report generation
-├── monte_carlo.py                    # Monte Carlo simulations
-├── portfolio_reports_*/               # Generated reports
-└── README.md                         # This file
+├── main_working.py                   # Main execution script (RECOMMENDED)
+├── config.py                        # Configuration and imports
+├── data_prep.py                     # Data download and preparation
+├── technical_indicators.py           # Technical analysis calculations
+├── time_series_models.py             # AR, ARMA, ARIMA model fitting
+├── volatility_models.py              # ARCH, GARCH, EGARCH modeling
+├── forecasting.py                   # Monte Carlo simulation and risk metrics
+├── plotting.py                       # All visualization functions
+├── pdf_generation.py                 # PDF report generation
+├── old/                             # Legacy files (moved for organization)
+│   ├── agnc_technical_analysis.ipynb # Original Jupyter notebook
+│   ├── portfolio_data.py            # Legacy data utilities
+│   ├── portfolio_main.py            # Legacy main script
+│   ├── portfolio_optimization.py    # Legacy optimization
+│   ├── portfolio_report.py          # Legacy report generation
+│   ├── monte_carlo.py               # Legacy Monte Carlo
+│   └── test_imports.py              # Test utilities
+├── portfolio_reports_*/              # Generated portfolio reports
+├── AGNC_Technical_Analysis_Report_*.pdf # Generated analysis reports
+└── README.md                        # This file
 ```
 
 ## 🔄 Updates
 
-### Latest Version Features
+### Latest Version Features (v3.0 - Modular Architecture)
+- ✅ **Modular Architecture**: Refactored into individual Python modules
+- ✅ **Improved Organization**: Legacy files moved to `old/` subfolder
+- ✅ **Enhanced PDF Generation**: Fixed ReportLab integration with in-memory image handling
+- ✅ **Better Error Handling**: Robust error handling across all modules
+- ✅ **Cleaner Codebase**: Separated concerns for better maintainability
 - ✅ Individual plot display for better visualization
 - ✅ Comprehensive PDF report generation
 - ✅ Enhanced forecasting with confidence intervals
@@ -163,10 +207,11 @@ Modify these parameters in the notebook:
 ## 📞 Support
 
 For questions or issues:
-1. Check the notebook output for error messages
-2. Verify all required packages are installed
+1. Check the console output for error messages
+2. Verify all required packages are installed (`pip install numpy pandas matplotlib seaborn yfinance statsmodels arch reportlab`)
 3. Ensure stable internet connection for data download
 4. Review the generated PDF report for detailed analysis
+5. Use `python main_working.py` for the latest modular system
 
 ## 📄 License
 
@@ -174,6 +219,6 @@ This project is for educational and research purposes. Please ensure compliance 
 
 ---
 
-**Generated**: 2025-01-21  
-**Version**: 2.0 - Enhanced Forecasting Suite  
+**Generated**: 2025-09-24  
+**Version**: 3.0 - Modular Architecture Suite  
 **Status**: Production Ready
